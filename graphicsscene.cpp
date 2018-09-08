@@ -17,6 +17,8 @@ GraphicsScene::GraphicsScene(QObject *parent) :
     //qDebug() << "size " << backgroundPixmap.size();
 #ifdef MACOS
     backgroundPixmap.setDevicePixelRatio(2);
+#else
+    backgroundPixmap.setDevicePixelRatio(1);
 #endif
     //qDebug() << "size " << backgroundPixmap.size() << "\n" <<  backgroundPixmap.devicePixelRatio();
     backgroundItem = new QGraphicsPixmapItem(backgroundPixmap);
@@ -63,6 +65,9 @@ PieceItem* GraphicsScene::getPieceItem(ChessPiece* chesspiece)
     QPixmap piecePixmap(filePath);
 #ifdef MACOS
     piecePixmap.setDevicePixelRatio(1);
+#else
+    //piecePixmap.setDevicePixelRatio(0.5);
+    piecePixmap = piecePixmap.scaled(piecePixmap.width() * 2, piecePixmap.height() * 2);
 #endif
     PieceItem *pieceItem = new PieceItem(chesspiece, piecePixmap);
     //pieceItem->setFlag(QGraphicsItem::ItemIsSelectable, true);

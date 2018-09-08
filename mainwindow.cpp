@@ -23,6 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //moveSound->setSource(QUrl(":/media/give.wav"));
 
     //moveSound->setVolume(0.5);
+#ifdef MACOS
+    this->resize(800, 700);
+#else
+    this->resize(1600, 1400);
+#endif
 
     this->graphicsScene = new GraphicsScene;
     ui->graphicsView->setMouseTracking(true);

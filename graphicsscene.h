@@ -45,11 +45,18 @@ protected:
     PieceItem *selectedPieceItem;
     ChessPiece *willBeEatenPiece;
     QGraphicsPixmapItem *backgroundItem;
+#ifdef MACOS
 
     const double squareLen = 109.6/2;
     const double leftPointx = 61/2 + 1, leftPointy = 59/2;
     const double leftLimit = 56.2/2, topLimit = 54.2/2, bottomLimit = 1150.2/2, rightLimit = 1042.6/2;
     const double pieceLen = 50;
+#else
+    const double squareLen = 109.6;
+    const double leftPointx = 61 + 3, leftPointy = 59 + 3;
+    const double leftLimit = 56.2, topLimit = 54.2, bottomLimit = 1150.2, rightLimit = 1042.6;
+    const double pieceLen = 100;
+#endif
 
 protected slots:
     void modifySelection();

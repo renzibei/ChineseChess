@@ -9,7 +9,11 @@
 
 //#define DEBUG_MODE
 
+#ifdef __APPLE__
+
 #define MACOS
+
+#endif
 
 class GameCenter : public QObject
 {
