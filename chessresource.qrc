@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/chessboard.png</file>
+        <file>images/general_0.png</file>
+        <file>images/advisor_0.png</file>
+        <file>images/elephant_0.png</file>
+        <file>images/horse_0.png</file>
+        <file>images/chariot_0.png</file>
+        <file>images/cannon_0.png</file>
+        <file>images/soldier_0.png</file>
+        <file>images/soldier_1.png</file>
+        <file>images/general_1.png</file>
+        <file>images/elephant_1.png</file>
+        <file>images/advisor_1.png</file>
+        <file>images/cannon_1.png</file>
+        <file>images/horse_1.png</file>
+        <file>images/chariot_1.png</file>
+    </qresource>
+</RCC>
