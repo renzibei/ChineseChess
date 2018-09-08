@@ -4,6 +4,7 @@
 #include <QJsonValue>
 #include <QJsonObject>
 #include "mainwindow.h"
+#include <QTextStream>
 
 NetServer* NetServer::_instance = nullptr;
 
@@ -31,20 +32,25 @@ void NetServer::initServer()
 void NetServer::getConnection()
 {
     this->tcpSocket = this->tcpServer->nextPendingConnection();
-    this->sendBeginInfo();
+    this->sendBeginInfo(GameCenter::getInstance()->isSavedGame());
     emit this->connectBuilt();
     //connect(this->tcpSocket, SIGNAL(connected()), this, SLOT(sendBeginInfo()));
     connect(this->tcpSocket, SIGNAL(readyRead()), this, SLOT(recvMessage()));
 
 }
 
-void NetServer::sendBeginInfo()
+void NetServer::sendBeginInfo(bool beginWithSavedGame)
 {
 
     QJsonObject beginObject;
     beginObject.insert("packageType", 3);
     beginObject.insert("hostColor", GameCenter::getInstance()->gamerColor());
-    this->sendMessage(beginObject);
+    if(beginWithSavedGame) {
+        beginObject.insert("gameMode", 1);
+        beginObject.insert("map", GameCenter::getChessBoard()->getSaveContent());
+    }
+    else beginObject.insert("gameMode", 0);
+    this->sendObjectMessage(beginObject);
 }
 
 ChessPos getPosFromJsonObject(const QJsonObject& object)
@@ -63,7 +69,7 @@ void NetServer::sendMoveMessage(ChessPos oldPos, ChessPos newPos)
     toObject.insert("x", newPos.x); toObject.insert("y",newPos.y);
     moveMessageObject.insert("from", fromObject);
     moveMessageObject.insert("to", toObject);
-    this->sendMessage(moveMessageObject);
+    this->sendObjectMessage(moveMessageObject);
 }
 
 void NetServer::sendFeedBackPackage(int statusType)
@@ -71,7 +77,7 @@ void NetServer::sendFeedBackPackage(int statusType)
     QJsonObject returnObject;
     returnObject.insert("packageType", 0);
     returnObject.insert("result", statusType);
-    this->sendMessage(returnObject);
+    this->sendObjectMessage(returnObject);
 }
 
 void NetServer::sendLossMessage(int loseType)
@@ -79,7 +85,7 @@ void NetServer::sendLossMessage(int loseType)
     QJsonObject lossMessageObject;
     lossMessageObject.insert("packageType", 2);
     lossMessageObject.insert("loseType", loseType);
-    this->sendMessage(lossMessageObject);
+    this->sendObjectMessage(lossMessageObject);
 }
 
 
@@ -113,9 +119,22 @@ void NetServer::recvMessage()
             emit GameCenter::getInstance()->gameOverSignal(GameCenter::getInstance()->localGamer(), winType);
         }
         else if(typeValue == 3) {
-            QJsonValue hostColorValue = rootObject.value("hostColor");
-            bool hostColor = hostColorValue.toBool();
-            GameCenter::getInstance()->setGamerColor(!hostColor);
+            QJsonValue gameModeValue = rootObject.value("gameMode");
+            int gameMode = gameModeValue.toInt();
+            if(gameMode == 0) {
+                QJsonValue hostColorValue = rootObject.value("hostColor");
+                bool hostColor = hostColorValue.toBool();
+                GameCenter::getInstance()->setGamerColor(!hostColor);
+                GameCenter::getInstance()->startGame();
+            }
+            else {
+                QJsonValue mapValue = rootObject.value("map");
+                QString map = mapValue.toString();
+                QTextStream in(&map, QIODevice::ReadOnly | QIODevice::Text);
+                GameCenter::getChessBoard()->clearChessBoard();
+                GameCenter::getChessBoard()->loadSavedFile(in);
+                MainWindow::getInstance()->changeNewScene();
+            }
             GameCenter::getInstance()->startGame();
         }
     } catch (const char* msg) {
@@ -189,14 +208,8 @@ void NetServer::setHostIp(const QString& ipAddress)
     this->_ipAddress = ipAddress;
 }
 
-int NetServer::sendMessage(const QJsonObject &object)
+int NetServer::sendMessage(const QByteArray& message)
 {
-#ifdef DEBUG_MODE
-    qDebug() << "state" << this->tcpSocket->state();
-    qDebug() << "send message" << object;
-#endif
-    QJsonDocument jsonDocument(object);
-    QByteArray message = jsonDocument.toJson(QJsonDocument::Compact);
     QDataStream dataStream(this->tcpSocket);
     dataStream.setByteOrder(QDataStream::BigEndian);
     dataStream << message.length();
@@ -213,4 +226,16 @@ int NetServer::sendMessage(const QJsonObject &object)
 
         leftBytes -= tempLen;
     }
+    return 0;
+}
+
+int NetServer::sendObjectMessage(const QJsonObject &object)
+{
+#ifdef DEBUG_MODE
+    qDebug() << "state" << this->tcpSocket->state();
+    qDebug() << "send message" << object;
+#endif
+    QJsonDocument jsonDocument(object);
+    QByteArray message = jsonDocument.toJson(QJsonDocument::Compact);
+    return this->sendMessage(message);
 }

@@ -13,7 +13,7 @@ GameCenter *GameCenter::getInstance()
 }
 
 GameCenter::GameCenter(bool localGamer, int colorSet, bool color, QObject *parent):
-    QObject(parent), chessBoard(nullptr), totalRound(0), _localGamer(localGamer)
+    QObject(parent), chessBoard(nullptr), totalRound(0), _localGamer(localGamer), _savedGame(0)
 {
     srand((unsigned)time(0));
     if(colorSet == 0) {
@@ -55,6 +55,17 @@ void GameCenter::newGame(bool colorSet)
     if(_gamerColor)
         this->_whoseRound = this->_localGamer;
     else this->_whoseRound = !_localGamer;
+    MainWindow::getInstance()->changeNewScene();
+}
+
+void GameCenter::loadOldGame(const QString& filePath)
+{
+    this->chessBoard->clearChessBoard();
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+    QTextStream in(&file);
+    this->chessBoard->loadSavedFile(in);
     MainWindow::getInstance()->changeNewScene();
 }
 

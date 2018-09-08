@@ -5,6 +5,8 @@
 #include <QGraphicsItem>
 #include <QDebug>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QDir>
 
 #include "waitdialog.h"
 #include "gamecenter.h"
@@ -15,33 +17,40 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-   // double pixelRatio = this->window()->devicePixelRatio();
-
     this->createMenu();
+    this->prepareSound();
+    //this->moveSound = new QSoundEffect(this);
+    //moveSound->setSource(QUrl(":/media/give.wav"));
 
-    //qDebug() << "ratio" << this->window()->devicePixelRatio();
-    //QWidget *centerWidget = new QWidget;
+    //moveSound->setVolume(0.5);
+
     this->graphicsScene = new GraphicsScene;
-    //QBrush backgroundBrush(QImage(":/images/chessboard.png"));
-
-    //this->graphicsScene->setBackgroundBrush(backgroundBrush);
-   // QHBoxLayout *HLayout = new QHBoxLayout;
-    //ui->centralWidget->setLayout(HLayout);
-   // centerWidget->setLayout(HLayout);
-    //QGraphicsView *graphicsView = new QGraphicsView;
     ui->graphicsView->setMouseTracking(true);
-    //graphicsView->setMouseTracking(true);
-   // HLayout->addWidget(ui->graphicsView);
-    //ui->centralWidget->layout()->addWidget(graphicsView);
-    //this->setCentralWidget(centerWidget);
     ui->graphicsView->setScene(this->graphicsScene);
     connect(ui->giveUpButton, SIGNAL(clicked()), this, SLOT(giveUpGame()));
     connect(GameCenter::getInstance(), SIGNAL(gameOverSignal(bool, int)), this, SLOT(gameOver(bool, int)));
-    //this->resize(1400 / pixelRatio, 1400/pixelRatio);
-    //this->setMouseTracking(true);
-    //this->repaint();
     MainWindow::instance = this;
+}
+
+bool MainWindow::checkJiangjun(int type)
+{
+    if(type == 1)
+        return 1;
+    return 0;
+}
+
+void MainWindow::prepareSound()
+{
+    this->moveSound = new QSound(":/media/give.wav");
+    connect(GameCenter::getInstance(), SIGNAL(pieceMoved()), moveSound, SLOT(play()));
+    this->gameOverSound = new QSound(":/media/check.wav");
+    connect(GameCenter::getInstance(), SIGNAL(gameOverSignal(bool, int)), this, SLOT(playJiangjun(bool, int)));
+}
+
+void MainWindow::playJiangjun(bool winner, int type)
+{
+    if(checkJiangjun(type))
+        this->gameOverSound->play();
 }
 
 void MainWindow::changeNewScene()
@@ -121,12 +130,29 @@ void MainWindow::joinGame()
 
 void MainWindow::saveGame()
 {
-
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                               QDir::homePath(),
+                               tr("存档文件 (*.txt)"));
+    if(fileName != "") {
+        QFile file(fileName);
+        if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            QMessageBox::critical(this, tr("File permission denied"), tr("无写入权限"));
+        else file.write(GameCenter::getChessBoard()->getSaveContent().toLocal8Bit().data());
+    }
 }
 
 void MainWindow::readOldGame()
 {
 
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open file"), QDir::homePath(), tr("存档文件 (*.txt)"));
+    if(filePath != "")
+        GameCenter::getInstance()->loadOldGame(filePath);
+    GameCenter::getInstance()->setSavedGame(true);
+    waitDialog *waitWindow = new waitDialog;
+    GameCenter::getInstance()->netServer->initServer();
+    connect(GameCenter::getInstance()->netServer, SIGNAL(connectBuilt()), waitWindow, SLOT(close()));
+    connect(GameCenter::getInstance()->netServer, SIGNAL(connectBuilt()), this, SLOT(beginGame()));
+    waitWindow->show();
 }
 
 void MainWindow::gameOver(bool whoseWinner, int winType)

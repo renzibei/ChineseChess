@@ -4,6 +4,8 @@
 
 #include <QMainWindow>
 #include "graphicsscene.h"
+#include <QSoundEffect>
+#include <QSound>
 
 
 namespace Ui {
@@ -31,8 +33,12 @@ private:
     Ui::MainWindow *ui;
     GraphicsScene *graphicsScene;
     static MainWindow* instance;
+    QSound *moveSound;
+    QSound *gameOverSound;
 
     void createMenu();
+
+    bool checkJiangjun(int type);
 
 
 private slots:
@@ -43,6 +49,8 @@ private slots:
     void quitGame();
     void giveUpGame();
     void beginGame();
+    void prepareSound();
+    void playJiangjun(bool winner, int type);
 };
 
 #endif // MAINWINDOW_H

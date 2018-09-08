@@ -15,5 +15,7 @@
         <file>images/cannon_1.png</file>
         <file>images/horse_1.png</file>
         <file>images/chariot_1.png</file>
+        <file>media/give.wav</file>
+        <file>media/check.wav</file>
     </qresource>
 </RCC>

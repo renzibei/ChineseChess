@@ -116,6 +116,7 @@ void GraphicsScene::removePieceItem(PieceItem* item)
     for(list<PieceItem*>::iterator it = pieceItems.begin(); it != pieceItems.end(); ++it)
         if(*it == item) {
             pieceItems.erase(it);
+            break;
         }
 }
 

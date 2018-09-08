@@ -1,5 +1,7 @@
 #include "chessboard.h"
 #include <cstring>
+#include <QTextStream>
+#include <gamecenter.h>
 
 inline int abs(int x) { return x > 0 ? x : -x ;}
 
@@ -31,6 +33,17 @@ ChessBoard::ChessBoard()
 
 }
 
+void ChessBoard::clearChessBoard()
+{
+    for(int i = 0; i < 10; ++i)
+        for(int j = 0; j < 9; ++j)
+            if(this->pieces[i][j] != nullptr) {
+                delete this->pieces[i][j];
+                this->pieces[i][j] = nullptr;
+            }
+    this->remainingPieces.clear();
+}
+
 void ChessBoard::addPiece(ChessPiece *piece)
 {
     this->pieces[piece->x()][piece->y()] = piece;
@@ -43,6 +56,7 @@ void ChessBoard::movePieceTo(ChessPiece* piece, int x, int y)
         this->pieces[piece->x()][piece->y()] = nullptr;
         piece->moveTo(x, y);
     }
+    emit GameCenter::getInstance()->pieceMoved();
 }
 
 vector<ChessPiece* >& ChessBoard::getPieces()
@@ -68,16 +82,79 @@ void ChessBoard::removePieceAt(const ChessPos &pos)
     }
 }
 
+QString ChessBoard::getSaveContent()
+{
+    QString tempStr;
+    vector<ChessPiece*> tempVector;
+    QTextStream out(&tempStr, QIODevice::WriteOnly | QIODevice::Text);
+    for(int k = 0; k < 2; ++k) {
+        if(GameCenter::getInstance()->gamerColor() == 0) {
+            if(k == 0)
+                out << "black" << '\n';
+            else out << "red" << '\n';
+        }
+        else {
+            if(k == 0)
+                out << "red" << '\n';
+            else out << "black" << '\n';
+        }
+        for(int i = 0; i < 7; ++i) {
+            for(vector<ChessPiece*>::iterator it = remainingPieces.begin(); it != remainingPieces.end(); it++)
+                if((*it)->type() == i + 2 && (*it)->belong() == k)
+                    tempVector.push_back(*it);
+            out << tempVector.size() << " ";
+            for(vector<ChessPiece*>::iterator it = tempVector.begin(); it != tempVector.end(); ++it)
+                out << "<" <<  (*it)->y() << "," << -(*it)->x() + 9 << "> " ;
+            out << '\n';
+            tempVector.clear();
+        }
+    }
+    return tempStr;
+}
+
+void ChessBoard::loadSavedFile(QTextStream &in)
+{
+
+    QString colorStr;
+    int pieceNum = 0, x = 0, y = 0;
+    QString xStr, yStr;
+    QString piecePosStr;
+    for(int k = 0; k < 2; ++k) {
+        in >> colorStr;
+        if(k == GameCenter::getInstance()->localGamer()) {
+            if(colorStr == "red")
+                GameCenter::getInstance()->simplyChangeColor(1);
+            else if(colorStr == "black")
+                GameCenter::getInstance()->simplyChangeColor(0);
+            else throw "Cant not load file, can't get color";
+        }
+        for(int i = 0; i < 7; ++i) {
+            in >> pieceNum;
+            for(int j = 0; j < pieceNum; ++j) {
+                in >> piecePosStr;
+                xStr = piecePosStr[1]; yStr = piecePosStr[3];
+                x = xStr.toInt(); y = yStr.toInt();
+                remainingPieces.push_back(new ChessPiece(-y+9, x, PieceType(i+2), k) );
+            }
+        }
+
+    }
+    for(unsigned long i = 0; i < this->remainingPieces.size(); ++i)
+        this->addPiece(this->remainingPieces[i]);
+
+}
+
 void ChessBoard::removePiece(ChessPiece* piece)
 {
     for(vector<ChessPiece*>::iterator it = remainingPieces.begin(); it != remainingPieces.end(); ++it)
         if(*it == piece) {
             this->remainingPieces.erase(it);
-            for(int i = 0; i < 10; ++i)
-                for(int j = 0; j < 9; ++j)
-                    if(this->pieces[i][j] == piece)
-                        this->pieces[i][j] = nullptr;
-            delete piece;
             break;
         }
+
+    for(int i = 0; i < 10; ++i)
+        for(int j = 0; j < 9; ++j)
+            if(this->pieces[i][j] == piece)
+                this->pieces[i][j] = nullptr;
+    delete piece;
 }

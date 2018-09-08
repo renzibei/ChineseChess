@@ -7,7 +7,7 @@
 #include "chesspiece.h"
 #include "netserver.h"
 
-#define DEBUG_MODE
+//#define DEBUG_MODE
 
 #define MACOS
 
@@ -40,6 +40,9 @@ public:
     void startGame();
 
 
+    void loadOldGame(const QString& filePath);
+
+
 
     /**
      * @brief roundEnd   调用来结束当前会和，开启下一回合
@@ -63,8 +66,23 @@ public:
 
     void setGamerColor(bool color);
 
+    void simplyChangeColor(bool color) {
+        this->_gamerColor = color;
+        if(_gamerColor)
+            this->_whoseRound = this->_localGamer;
+        else this->_whoseRound = !_localGamer;
+    }
+
     bool localGamer() const {
         return this->_localGamer;
+    }
+
+    bool isSavedGame() const {
+        return this->_savedGame;
+    }
+
+    bool setSavedGame(bool isSavedGame = true) {
+        this->_savedGame = isSavedGame;
     }
 
 protected:
@@ -74,6 +92,7 @@ protected:
     int totalRound;
     bool _localGamer;
     int remainTime;
+    bool _savedGame;
     static GameCenter *_instance;
 
 protected slots:
@@ -81,6 +100,7 @@ protected slots:
 
 signals:
     void gameOverSignal(bool whoseWinner, int winType);
+    void pieceMoved();
 };
 
 

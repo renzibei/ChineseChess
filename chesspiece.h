@@ -41,6 +41,8 @@ protected:
     ChessPos _pos;
     PieceType _type;
     bool _belong;
+
+
 };
 
 

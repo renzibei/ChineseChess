@@ -4,6 +4,8 @@
 #include <vector>
 #include "chesspiece.h"
 #include "chesspos.h"
+#include <QFile>
+#include <QTextStream>
 
 using std::vector;
 
@@ -18,12 +20,17 @@ public:
         return this->pieces[pos.x][pos.y];
     }
 
+    void loadSavedFile(QTextStream &in);
+
     vector<ChessPiece*> &getPieces();
     void addPiece(ChessPiece *piece);
     void removePieceAt(const ChessPos &pos);
     void removePiece(ChessPiece* piece);
     void movePieceTo(ChessPiece* piece, int x, int y);
     void movePieceTo(ChessPiece* piece, const ChessPos &pos);
+    void clearChessBoard();
+
+    QString getSaveContent();
 protected:
     ChessPiece *pieces[10][9];
 

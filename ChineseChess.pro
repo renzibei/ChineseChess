@@ -6,9 +6,13 @@
 
 QT       += core gui widgets
 QT += network
+QT       += multimedia
+
 
 TARGET = ChineseChess
 TEMPLATE = app
+
+ICON = ./images/chessIcon.icns
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings

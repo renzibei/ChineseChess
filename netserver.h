@@ -20,7 +20,8 @@ public:
 
     void connectServer();
     int readIntoBuffer(QByteArray& buffer, int len);
-    int sendMessage(const QJsonObject& object);
+    int sendObjectMessage(const QJsonObject& object);
+    int sendMessage(const QByteArray& message);
     void initServer();
     void sendMoveMessage(ChessPos oldPos, ChessPos newPos);
     void sendLossMessage(int loseType = 1);
@@ -41,7 +42,7 @@ protected:
 protected slots:
     void getConnection();
     void recvMessage();
-    void sendBeginInfo();
+    void sendBeginInfo(bool beginWithSavedGame = false);
 
 signals:
     void getFeedBack();
