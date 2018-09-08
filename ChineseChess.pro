@@ -12,7 +12,7 @@ QT       += multimedia
 TARGET = ChineseChess
 TEMPLATE = app
 
-ICON = ./images/chessIcon.icns
+
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -64,3 +64,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     chessresource.qrc
+ICON = images/chessIcon.icns
+RC_FILE += chessApp.rc
+#RC_ICONS = ./images/chessIcon.ico
