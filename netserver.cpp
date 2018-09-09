@@ -8,7 +8,8 @@
 
 NetServer* NetServer::_instance = nullptr;
 
-NetServer::NetServer()
+NetServer::NetServer():
+    tcpServer(nullptr), tcpSocket(nullptr)
 {
     this->_ipAddress = "127.0.0.1";
     NetServer::_instance = this;
@@ -16,6 +17,8 @@ NetServer::NetServer()
 
 void NetServer::connectServer()
 {
+    if(this->tcpSocket != nullptr)
+        delete this->tcpSocket;
     this->tcpSocket = new QTcpSocket;
     this->tcpSocket->connectToHost(QHostAddress(this->_ipAddress), 8731);
     connect(this->tcpSocket, SIGNAL(readyRead()), this, SLOT(recvMessage()));
@@ -24,6 +27,8 @@ void NetServer::connectServer()
 
 void NetServer::initServer()
 {
+    if(this->tcpServer != nullptr)
+        delete  this->tcpServer;
     this->tcpServer = new QTcpServer;
     this->tcpServer->listen(QHostAddress::Any, 8731);
     connect(this->tcpServer, SIGNAL(newConnection()), this, SLOT(getConnection()));
