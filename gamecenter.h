@@ -15,6 +15,8 @@
 
 #endif
 
+#define roundTime 60
+
 class GameCenter : public QObject
 {
     Q_OBJECT

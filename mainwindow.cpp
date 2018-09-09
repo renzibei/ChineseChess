@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->prepareSound();
     //this->moveSound = new QSoundEffect(this);
     //moveSound->setSource(QUrl(":/media/give.wav"));
+    qDebug() << this->devicePixelRatio();
 
     //moveSound->setVolume(0.5);
 #ifdef MACOS
@@ -108,7 +109,7 @@ void MainWindow::displayTime(int remainTime)
 {
     ui->lcdNumber->display(QString::number(remainTime));
     this->repaint();
-    this->update();
+    //this->update();
 }
 
 void MainWindow::createNewGame()

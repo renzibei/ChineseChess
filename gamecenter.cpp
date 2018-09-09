@@ -25,7 +25,8 @@ GameCenter::GameCenter(bool localGamer, int colorSet, bool color, QObject *paren
     else this->_whoseRound = !_localGamer;
     this->chessBoard = new ChessBoard;
     this->netServer = NetServer::getInstance();
-    this->gameClock = new QTimer;
+    this->gameClock = new QTimer();
+    gameClock->setTimerType(Qt::PreciseTimer);
     GameCenter::_instance = this;
 }
 
@@ -74,7 +75,8 @@ void GameCenter::startGame()
 #ifndef DEBUG_MODE
     this->gameClock->start(1000);
 #endif
-    remainTime = 30;
+    remainTime = roundTime;
+    disconnect(gameClock, 0, this, 0);
     connect(gameClock, SIGNAL(timeout()), this, SLOT(timeDecline()));
     connect(this, SIGNAL(gameOverSignal(bool, int)), gameClock, SLOT(stop()));
     MainWindow::getInstance()->displayTime(remainTime);
@@ -110,7 +112,7 @@ void GameCenter::roundEnd()
 {
     this->totalRound++;
     this->_whoseRound = !_whoseRound;
-    this->remainTime = 30;
+    this->remainTime = roundTime;
     MainWindow::getInstance()->displayTime(remainTime);
 }
 
