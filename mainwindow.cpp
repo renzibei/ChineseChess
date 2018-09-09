@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->graphicsScene = new GraphicsScene;
     ui->graphicsView->setMouseTracking(true);
+    //ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     ui->graphicsView->setScene(this->graphicsScene);
     connect(ui->giveUpButton, SIGNAL(clicked()), this, SLOT(giveUpGame()));
     connect(GameCenter::getInstance(), SIGNAL(gameOverSignal(bool, int)), this, SLOT(gameOver(bool, int)));

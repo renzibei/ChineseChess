@@ -135,7 +135,7 @@ void GraphicsScene::movePieceItemTo(ChessPos oldPos, ChessPos newPos)
         GameCenter::getInstance()->roundEnd();
         this->removePieceItem(pieceItem);
         GameCenter::getInstance()->eatPiece(selectedPiece, chesspiece);
-        eaterItem->setPos(this->posFromXY(chesspiece->pos()));
+        eaterItem->setPos(this->posFromXY(selectedPiece->pos()));
     }
     else {
         GameCenter::getInstance()->roundEnd();
@@ -168,7 +168,7 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
                             GameCenter::getInstance()->netServer->sendMoveMessage(selectedPiece->pos(), chesspiece->pos());
                             GameCenter::getInstance()->eatPiece(selectedPiece, chesspiece);
 
-                            eaterItem->setPos(this->posFromXY(chesspiece->pos()));
+                            eaterItem->setPos(this->posFromXY(selectedPiece->pos()));
                             eaterItem->setSelected(false);
 
                             movedFlag = 1;
