@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //moveSound->setVolume(0.5);
 #ifdef MACOS
-    this->resize(800, 700);
+    this->resize(800, 750);
 #else
     this->resize(1600, 1400);
 #endif

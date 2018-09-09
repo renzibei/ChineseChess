@@ -8,6 +8,7 @@
 #include "chesspiece.h"
 #include "pieceitem.h"
 #include "chesspos.h"
+#include "gamecenter.h"
 
 using std::list;
 
