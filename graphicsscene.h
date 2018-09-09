@@ -47,7 +47,7 @@ protected:
     PieceItem *selectedPieceItem;
     ChessPiece *willBeEatenPiece;
     QGraphicsPixmapItem *backgroundItem;
-#ifdef MACOS
+#ifdef LOW_DPI
 
     const double squareLen = 109.6/2;
     const double leftPointx = 61/2 + 1, leftPointy = 59/2;

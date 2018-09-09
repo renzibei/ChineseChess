@@ -15,7 +15,7 @@ GraphicsScene::GraphicsScene(QObject *parent) :
     backgroundPixmap.load(":/images/chessboard.png");
 
     //qDebug() << "size " << backgroundPixmap.size();
-#ifdef MACOS
+#ifdef LOW_DPI
     backgroundPixmap.setDevicePixelRatio(2);
 #else
     backgroundPixmap.setDevicePixelRatio(1);
@@ -63,7 +63,7 @@ PieceItem* GraphicsScene::getPieceItem(ChessPiece* chesspiece)
 
 
     QPixmap piecePixmap(filePath);
-#ifdef MACOS
+#ifdef LOW_DPI
     piecePixmap.setDevicePixelRatio(1);
 #else
     //piecePixmap.setDevicePixelRatio(0.5);

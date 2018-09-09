@@ -9,11 +9,11 @@
 
 //#define DEBUG_MODE
 
-#ifdef __APPLE__
+//#ifdef __APPLE__
 
-#define MACOS
+#define LOW_DPI
 
-#endif
+//#endif
 
 #define roundTime 60
 

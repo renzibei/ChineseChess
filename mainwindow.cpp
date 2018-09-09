@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << this->devicePixelRatio();
 
     //moveSound->setVolume(0.5);
-#ifdef MACOS
+#ifdef LOW_DPI
     this->resize(800, 750);
 #else
     this->resize(1600, 1400);
