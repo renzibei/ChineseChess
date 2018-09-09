@@ -13,7 +13,7 @@ GameCenter *GameCenter::getInstance()
 }
 
 GameCenter::GameCenter(bool localGamer, int colorSet, bool color, QObject *parent):
-    QObject(parent), chessBoard(nullptr), totalRound(0), _localGamer(localGamer), _savedGame(0)
+    QObject(parent), chessBoard(nullptr), totalRound(0), _localGamer(localGamer), _savedGame(0), _gameOver(0)
 {
     srand((unsigned)time(0));
     if(colorSet == 0) {
@@ -27,6 +27,7 @@ GameCenter::GameCenter(bool localGamer, int colorSet, bool color, QObject *paren
     this->netServer = NetServer::getInstance();
     this->gameClock = new QTimer();
     gameClock->setTimerType(Qt::PreciseTimer);
+    connect(this, SIGNAL(gameOverSignal(bool, int)), this, SLOT(setGameOver()));
     GameCenter::_instance = this;
 }
 
@@ -49,7 +50,7 @@ void GameCenter::newGame(bool colorSet)
     if(chessBoard != nullptr)
         delete chessBoard;
     this->chessBoard = new ChessBoard;
-
+    this->setGameOver(0);
     totalRound = 0;
     if(!colorSet)
         this->_gamerColor = rand()%2;

@@ -72,6 +72,10 @@ public:
 
     void setGamerColor(bool color);
 
+    bool isGameOver() {
+        return this->_gameOver;
+    }
+
     void simplyChangeColor(bool color) {
         this->_gamerColor = color;
         if(_gamerColor)
@@ -87,8 +91,13 @@ public:
         return this->_savedGame;
     }
 
-    bool setSavedGame(bool isSavedGame = true) {
+    void setSavedGame(bool isSavedGame = true) {
         this->_savedGame = isSavedGame;
+    }
+
+public slots:
+    void setGameOver(bool isOver = true) {
+        this->_gameOver = isOver;
     }
 
 protected:
@@ -99,6 +108,7 @@ protected:
     bool _localGamer;
     int remainTime;
     bool _savedGame;
+    bool _gameOver;
     static GameCenter *_instance;
 
 protected slots:

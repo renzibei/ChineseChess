@@ -170,6 +170,8 @@ void MainWindow::gameOver(bool whoseWinner, int winType)
             QMessageBox::information(this, tr("胜利"), tr("对方认输, you WIN"));
         else if(winType == 3)
             QMessageBox::information(this, tr("胜利"), tr("对方操作超时, you WIN"));
+        else if(winType == 4)
+            QMessageBox::information(this, tr("胜利"), tr("对方对将, you WIN"));
     }
     else {
         if(winType == 1)
@@ -178,6 +180,8 @@ void MainWindow::gameOver(bool whoseWinner, int winType)
             QMessageBox::information(this, tr("输了"), tr("认输, you Lose"));
         else if(winType == 3)
             QMessageBox::information(this, tr("输了"), tr("操作超时, you Lose"));
+        else if(winType == 4)
+            QMessageBox::information(this, tr("输了"), tr("对将， you Lose"));
     }
 }
 

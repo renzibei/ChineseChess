@@ -29,7 +29,8 @@ ChessBoard::ChessBoard()
     }
     for(unsigned long i = 0; i < this->remainingPieces.size(); ++i)
         this->addPiece(this->remainingPieces[i]);
-
+    //this->generalPos[0] = new ChessPos(0, 4);
+    //this->generalPos[1] = new ChessPos(9, 4);
 
 }
 
@@ -49,12 +50,40 @@ void ChessBoard::addPiece(ChessPiece *piece)
     this->pieces[piece->x()][piece->y()] = piece;
 }
 
+bool ChessBoard::generalFaced() const
+{
+    ChessPos* generalPos[2];
+    memset(generalPos, 0, sizeof(generalPos));
+    for(int i = 3; i <= 5; ++i) {
+        if(pieces[0][i] != nullptr)
+            if(pieces[0][i]->type() == General)
+                generalPos[1] = new ChessPos(0, i);
+        if(pieces[9][i] != nullptr)
+            if(pieces[9][i]->type() == General)
+                generalPos[0] = new ChessPos(9, i);
+    }
+    if(generalPos[0] != nullptr && generalPos[1] != nullptr)
+        if(generalPos[0]->y == generalPos[1]->y) {
+            for(int i = 1; i < 9; ++i)
+                if(pieces[i][generalPos[0]->y] != nullptr)
+                    return false;
+            return true;
+        }
+    return false;
+}
+
 void ChessBoard::movePieceTo(ChessPiece* piece, int x, int y)
 {
     if(piece->canMoveTo(x, y)) {
         this->pieces[x][y] = piece;
         this->pieces[piece->x()][piece->y()] = nullptr;
         piece->moveTo(x, y);
+       // if(piece->type() == General)
+       //     *(this->generalPos[piece->belong()]) = piece->pos();
+        if(this->generalFaced())
+            emit GameCenter::getInstance()->gameOverSignal(!piece->belong(), 4);
+
+
     }
     emit GameCenter::getInstance()->pieceMoved();
 }
