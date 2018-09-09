@@ -26,7 +26,7 @@ packageType = 1
 
 2
 
-将军losType为1，认输loseType为2, 超时loseType为3
+将军losType为1，认输loseType为2, 超时loseType为3, 对将为4
 
 输包{"packageType", "loseType":number
 

@@ -200,7 +200,7 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsScene::setSelectable()
 {
-    if(GameCenter::getInstance()->whoseRound() == GameCenter::getInstance()->localGamer()) {
+    if(!GameCenter::getInstance()->isGameOver() && GameCenter::getInstance()->whoseRound() == GameCenter::getInstance()->localGamer()) {
         for(list<PieceItem*>::iterator it = this->pieceItems.begin(); it != pieceItems.end(); it++)
             (*it)->setFlag(QGraphicsItem::ItemIsSelectable, (*it)->chessPiece()->belong() == GameCenter::getInstance()->whoseRound());
     }

@@ -29,12 +29,14 @@ public:
     void movePieceTo(ChessPiece* piece, int x, int y);
     void movePieceTo(ChessPiece* piece, const ChessPos &pos);
     void clearChessBoard();
+    bool generalFaced() const;
 
     QString getSaveContent();
 protected:
     ChessPiece *pieces[10][9];
 
     vector<ChessPiece*> remainingPieces;
+   // ChessPos* generalPos[2];
 };
 
 #endif // CHESSBOARD_H

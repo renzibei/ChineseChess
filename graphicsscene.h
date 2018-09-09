@@ -5,6 +5,7 @@
 #include <QGraphicsPixmapItem>
 #include <QList>
 #include <list>
+#include "gamecenter.h"
 #include "chesspiece.h"
 #include "pieceitem.h"
 #include "chesspos.h"
